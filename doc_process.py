@@ -13,6 +13,7 @@ class DocToWeb():
     def parse_text(self):
         # Start parsing the text document sequentially
         self.html_content = []
+        wrd_status = False
         with open (self.file_name, 'r') as text_file:
             for index, line in enumerate(text_file):
 
@@ -20,13 +21,19 @@ class DocToWeb():
                 # Continue to next line for empty lines
                 if line_word_list == []:
                     continue
+                if len(line_word_list) == 1:
+                    wrd_status, mod_wrd = self.checkLineTag(line_word_list[0])
 
-                for word in line_word_list:
-                    wrd_status, mod_wrd = self.checkBITag(word)
                     if wrd_status == True:
-                        line_word_list[line_word_list.index(word)] = mod_wrd
+                        line_word_list[0] = mod_wrd
 
-                # print (str(line_word_list))
+                if wrd_status == False:
+                    for word in line_word_list:
+                        wrd_status, mod_wrd = self.checkBITag(word)
+                        if wrd_status == True:
+                            line_word_list[line_word_list.index(word)] = mod_wrd
+
+                # print ("AA: ", str(line_word_list))
 
                 status, tags   = self.checkIfHeading(line_word_list[0])
                 if status:
@@ -70,9 +77,9 @@ class DocToWeb():
 
     def checkBITag(self, wrd):
 
-        if (wrd[0]=="*") and (wrd[-1]=="*"):
+        if (wrd[0]=="_") and (wrd[-1]=="_") and len(set(wrd))!=1:
             status, wrd = True, self.tagDict_word["italics"][0] + wrd + self.tagDict_word["italics"][-1]
-        elif (wrd[0]=="_") and (wrd[-1]=="_"):
+        elif (wrd[0]=="*") and (wrd[-1]=="*"):
             status, wrd = True, self.tagDict_word["bold"][0] + wrd + self.tagDict_word["bold"][-1]
         else:
             status, wrd = False, " "
