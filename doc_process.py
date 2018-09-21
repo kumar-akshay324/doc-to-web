@@ -13,25 +13,42 @@ class DocToWeb():
     def parse_text(self):
         # Start parsing the text document sequentially
         self.html_content = []
-        wrd_status = False
+        flag_end_listing = False
         with open (self.file_name, 'r') as text_file:
             for index, line in enumerate(text_file):
 
-                line_word_list = line.split()
+                # Split Words from a line for all sorts of processing
+                line_word_list      = line.split()
+
                 # Continue to next line for empty lines
                 if line_word_list == []:
                     continue
-                if len(line_word_list) == 1:
-                    wrd_status, mod_wrd = self.checkLineTag(line_word_list[0])
 
+                word_list_length    =len(line_word_list)
+                first_split_word    = line_word_list[0]
+
+                # For one word lines, check if they are special tags
+                if word_list_length == 1:
+                    wrd_status, mod_wrd = self.checkLineTag(first_split_word)
                     if wrd_status == True:
                         line_word_list[0] = mod_wrd
 
-                if wrd_status == False:
-                    for word in line_word_list:
-                        wrd_status, mod_wrd = self.checkBITag(word)
-                        if wrd_status == True:
-                            line_word_list[line_word_list.index(word)] = mod_wrd
+                # Check for bold or italic words in all lines and  all sentences
+                for word in line_word_list:
+                    wrd_status, mod_wrd = self.checkBITag(word)
+                    if wrd_status == True:
+                        line_word_list[line_word_list.index(word)] = mod_wrd
+
+                # Check for bullets and lists
+
+                if first_split_word == "-":
+                     if "<ul>" not in self.html_content:
+                         self.html_content.append("<ul>")
+                     temp_list = line_word_list[1:]
+                     temp_list.append(self.tagDict_listing["-"][1])
+                     temp_list.insert(0, self.tagDict_listing["-"][0])
+                     line_word_list = temp_list
+                     flag_end_listing = True
 
                 # print ("AA: ", str(line_word_list))
 
@@ -43,6 +60,9 @@ class DocToWeb():
 
                 html_equivalent = ' '.join(line_word_list)
                 self.html_content.append(html_equivalent)
+
+                # if flag_end_listing:
+                #     self.html_content.append("</ul>")
 
         for lines in self.html_content:
             print (lines)
@@ -66,11 +86,12 @@ class DocToWeb():
     def tagDictionary(self):
 
         self.tagDict_heading    = {">": ["<h1>", "</h1>"], ">>": ["<h2>", "</h2>"], ">>>": ["<h3>", "</h3>"]}
-        self.tagDict_para       = {"-": "<ul>", "~~~~": ["<div>", "</div>"]}
+        self.tagDict_listing    = {"-": ["<li>", "</li>"]}
+        self.tagDict_blocks     = {"~~~~": ["<div>", "</div>"]}
         self.tagDict_word       = {"italics": ["<i>", "</i>"], "bold": ["<b>", "</b>"]}
         self.tagDict_line       = {"----": "<br>", "____": "<hr>"}
 
-        self.tagDict_list = [self.tagDict_word, self.tagDict_para, self.tagDict_heading]
+        self.tagDict_list = [self.tagDict_word, self.tagDict_listing, self.tagDict_heading]
 
     def tagIdentities(self):
         self.tag_identity = {0: "word", 1: "para", 2 : "heading"}
@@ -78,9 +99,9 @@ class DocToWeb():
     def checkBITag(self, wrd):
 
         if (wrd[0]=="_") and (wrd[-1]=="_") and len(set(wrd))!=1:
-            status, wrd = True, self.tagDict_word["italics"][0] + wrd + self.tagDict_word["italics"][-1]
+            status, wrd = True, self.tagDict_word["italics"][0] + wrd[1:-1] + self.tagDict_word["italics"][-1]
         elif (wrd[0]=="*") and (wrd[-1]=="*"):
-            status, wrd = True, self.tagDict_word["bold"][0] + wrd + self.tagDict_word["bold"][-1]
+            status, wrd = True, self.tagDict_word["bold"][0] + wrd[1:-1] + self.tagDict_word["bold"][-1]
         else:
             status, wrd = False, " "
 

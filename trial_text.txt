@@ -1,8 +1,13 @@
 ----
 
->>> RUN: sudo -H pip3 install tensorflow --upgrade and get this message finally to be ready to use TENSORFLOW
+>>> RUN: sudo -H pip3 install tensorflow --upgrade and get this message finally to be *ready* to _use_ TENSORFLOW
 
 ____
+
+- ayhv
+- utfughib
+- ytdfukb
+
 
 >> Shows all requirements have been duly met
 
