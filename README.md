@@ -5,20 +5,20 @@ either creates content in a provided HTML webpage OR creates HTML format for the
 
 ## Annotations in Text Document to HTML tags
 
-* ">"         : <h1> <h1>
-* ">>"        : <h2> <h2>
-* ">>>"       : <h3> <h3>
+* ">"         : heading 1
+* ">>"        : heading 2
+* ">>>"       : heading 3
 
-* "-"         : <ul> <li> </li> </ul>
+* "-"         : bullets and list
 
-* Text        : <p>
+* Text        : paragraph
 
-* "----"      : <br>
+* "----"      : line break
 
-* "____"      : <hr>
+* "____"      : horizontal line
 
-* "_text_"    : <i> </i>
+* "_text_"    : italics
 
-* "*text*"    : <b> </b>
+* "*text*"    : bold
 
-* "~~~~"      : <div> </div>
+* "~~~~"      : div
