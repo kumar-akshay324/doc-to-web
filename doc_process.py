@@ -13,7 +13,8 @@ class DocToWeb():
     def parse_text(self):
         # Start parsing the text document sequentially
         self.html_content = []
-        flag_end_listing = False
+        first_split_word_prev = " "
+
         with open (self.file_name, 'r') as text_file:
             for index, line in enumerate(text_file):
 
@@ -39,16 +40,20 @@ class DocToWeb():
                     if wrd_status == True:
                         line_word_list[line_word_list.index(word)] = mod_wrd
 
+
                 # Check for bullets and lists
 
+                if first_split_word != "-"  and first_split_word_prev == "-":
+                    self.html_content.append("</ul>")
+
                 if first_split_word == "-":
-                     if "<ul>" not in self.html_content:
-                         self.html_content.append("<ul>")
-                     temp_list = line_word_list[1:]
-                     temp_list.append(self.tagDict_listing["-"][1])
-                     temp_list.insert(0, self.tagDict_listing["-"][0])
-                     line_word_list = temp_list
-                     flag_end_listing = True
+                    if first_split_word_prev != "-":
+                        self.html_content.append("<ul>")
+
+                    temp_list = line_word_list[1:]
+                    temp_list.append(self.tagDict_listing["-"][1])
+                    temp_list.insert(0, self.tagDict_listing["-"][0])
+                    line_word_list = temp_list
 
                 # print ("AA: ", str(line_word_list))
 
@@ -61,8 +66,18 @@ class DocToWeb():
                 html_equivalent = ' '.join(line_word_list)
                 self.html_content.append(html_equivalent)
 
-                # if flag_end_listing:
-                #     self.html_content.append("</ul>")
+                first_split_word_prev = first_split_word
+
+            try:
+                html_rev_list = self.html_content.copy()
+                html_rev_list.reverse()
+                ul_open_in = html_rev_list.index("<ul>")
+                ul_cls_in = html_rev_list.index("</ul>")
+                print ("Cls: ", ul_cls_in, "Opn: ", ul_open_in)
+                if ul_open_in < ul_cls_in:
+                    self.html_content.append("</ul>")
+            except:
+                pass
 
         for lines in self.html_content:
             print (lines)
