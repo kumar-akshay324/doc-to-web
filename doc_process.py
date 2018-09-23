@@ -105,8 +105,7 @@ class DocToWeb():
         self.tagDict_blocks     = {"~~~~": ["<div>", "</div>"]}
         self.tagDict_word       = {"italics": ["<i>", "</i>"], "bold": ["<b>", "</b>"]}
         self.tagDict_line       = {"----": "<br>", "____": "<hr>"}
-
-        self.tagDict_list = [self.tagDict_word, self.tagDict_listing, self.tagDict_heading]
+        self.tagDict_list = [self.tagDict_heading, self.tagDict_listing, self.tagDict_blocks, self.tagDict_word, self.tagDict_line]
 
     def tagIdentities(self):
         self.tag_identity = {0: "word", 1: "para", 2 : "heading"}
