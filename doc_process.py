@@ -128,6 +128,20 @@ class DocToWeb():
            except:
                return False, False
 
+    def appendToWebpage(self, webpage_doc):
+        with open (webpage_doc, "a") as to_append_file:
+            for index, line in enumerate(to_append_file):
+                if index == self.line_pointer:
+                    to_append_file.write("\n")
+                    for content in self.html_content:
+                        to_append_file.write(content)
+                    break
+                else:
+                    print ("Line pointer doesn't exist")
+
+
 if __name__ == '__main__':
-    doc2web_obj = DocToWeb("trial_text.txt", 5)
+    webpage     = "append.html"
+    doc2web_obj = DocToWeb("trial_text.txt", 62)
     doc2web_obj.parse_text()
+    doc2web_obj.appendToWebpage(webpage)
